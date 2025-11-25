@@ -1,5 +1,7 @@
 🌐 Serverless Dictionary API using AWS
 
+http://serverless-dictionary-frontend-meraj.s3-website.ap-south-1.amazonaws.com
+
 A fully serverless, scalable, and cost-efficient dictionary lookup service built using AWS Lambda, API Gateway, DynamoDB, S3, and optionally CloudFront.
 
 This project demonstrates real-world cloud skills, modern API development, and serverless best practices — ideal for cloud engineering, AWS, DevOps, and backend roles.
