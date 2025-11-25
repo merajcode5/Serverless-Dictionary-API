@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Serverless Dictionary API</title>
+
+    <style>
+        body {
+            font-family: system-ui, Arial;
+            max-width: 650px;
+            margin: 40px auto;
+            padding: 0 20px;
+            color: #222;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        input {
+            width: 70%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #0056CC;
+        }
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        .word {
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+        .meaning {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>📘 Serverless Dictionary</h1>
+    <p>Enter a word and click Search.</p>
+
+    <input id="wordInput" placeholder="e.g., hello" />
+    <button onclick="lookupWord()">Search</button>
+
+    <div id="result" class="result"></div>
+
+    <script>
+        const API_URL = "https://s2tj9gyxsh.execute-api.ap-south-1.amazonaws.com/lookup";
+
+        async function lookupWord() {
+            const resultEl = document.getElementById('result');
+            const word = document.getElementById('wordInput').value.trim();
+
+            if (!word) {
+                resultEl.innerHTML = "<em>Please enter a word.</em>";
+                return;
+            }
+
+            resultEl.innerHTML = "<em>Searching...</em>";
+
+            try {
+                const response = await fetch(`${API_URL}?word=${word}`);
+
+                if (!response.ok) {
+                    resultEl.innerHTML = "<strong>No definition found.</strong>";
+                    return;
+                }
+
+                const data = await response.json();
+                const item = data.results[0];
+
+                let html = `<div class="word">${word}</div>`;
+
+                item.meanings.forEach(m => {
+                    html += `
+        <div class="meaning">
+          <strong>${m.partOfSpeech}</strong>
+          <ul>
+            ${m.definitions.slice(0, 3).map(def => `<li>${def.definition}</li>`).join("")}
+          </ul>
+        </div>`;
+                });
+
+                resultEl.innerHTML = html;
+
+            } catch (error) {
+                resultEl.innerHTML = `<strong>Error:</strong> ${error.message}`;
+            }
+        }
+    </script>
+
+</body>
+</html>
